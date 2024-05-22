@@ -1,0 +1,221 @@
+[gd_scene load_steps=29 format=3 uid="uid://bnf8i6hbc0n83"]
+
+[ext_resource type="Script" path="res://scripts/world_environment_plus.gd" id="1_6fa6e"]
+[ext_resource type="Script" path="res://shaders/post_process/motion_blur.gd" id="1_6w3rn"]
+[ext_resource type="Script" path="res://character.gd" id="1_184c3"]
+[ext_resource type="Script" path="res://camera_3d.gd" id="2_34p80"]
+[ext_resource type="Shader" path="res://shaders/post_process/motion_blur.gdshader" id="3_nv5lv"]
+[ext_resource type="Script" path="res://blurtest.gd" id="6_gnlen"]
+[ext_resource type="Texture2D" uid="uid://dr5tkufwxg8c2" path="res://textures/checker.BMP" id="6_yig8l"]
+[ext_resource type="Script" path="res://blurtest2.gd" id="7_j6mxa"]
+
+[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ka0vf"]
+energy_multiplier = 4.0
+
+[sub_resource type="Sky" id="Sky_yeup5"]
+sky_material = SubResource("PhysicalSkyMaterial_ka0vf")
+
+[sub_resource type="Environment" id="Environment_hjfhn"]
+background_mode = 2
+sky = SubResource("Sky_yeup5")
+ambient_light_color = Color(0.00184107, 0.00184107, 0.00184107, 1)
+ambient_light_sky_contribution = 0.5
+tonemap_mode = 2
+glow_enabled = true
+glow_mix = 0.5
+fog_enabled = true
+fog_sky_affect = 0.0
+
+[sub_resource type="CompositorEffect" id="CompositorEffect_ibfws"]
+resource_local_to_scene = false
+resource_name = ""
+enabled = true
+effect_callback_type = 4
+needs_motion_vectors = true
+needs_normal_roughness = true
+script = ExtResource("1_6w3rn")
+
+[sub_resource type="Compositor" id="Compositor_nmbee"]
+compositor_effects = Array[CompositorEffect]([SubResource("CompositorEffect_ibfws")])
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kmswr"]
+shader = ExtResource("3_nv5lv")
+shader_parameter/INV_PROJECTION_MATRIX = null
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_0tvhp"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_25wll"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_jwl7b"]
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_grkbu"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_lyf3s"]
+lightmap_size_hint = Vector2i(17, 9)
+add_uv2 = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mvypi"]
+albedo_color = Color(0.999323, 0, 0.183467, 1)
+roughness = 0.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a7bae"]
+roughness = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_f06v0"]
+lightmap_size_hint = Vector2i(44, 66)
+material = SubResource("StandardMaterial3D_a7bae")
+add_uv2 = true
+size = Vector3(4, 4, 4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_d8y8f"]
+lightmap_size_hint = Vector2i(164, 246)
+material = SubResource("StandardMaterial3D_a7bae")
+add_uv2 = true
+size = Vector3(16, 16, 16)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4xrwj"]
+albedo_color = Color(0.733413, 1.31397e-05, 0.502883, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4ykrf"]
+lightmap_size_hint = Vector2i(80, 83)
+material = SubResource("StandardMaterial3D_4xrwj")
+add_uv2 = true
+size = Vector3(0.2, 0.2, 15)
+
+[sub_resource type="Shader" id="Shader_f5e75"]
+code = "// NOTE: Shader automatically converted from Godot Engine 4.3.dev6's StandardMaterial3D.
+
+shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_burley, specular_schlick_ggx;
+
+uniform vec4 albedo : source_color;
+uniform sampler2D texture_albedo : source_color, filter_nearest_mipmap_anisotropic, repeat_enable;
+
+uniform float roughness : hint_range(0.0, 1.0);
+
+uniform float specular : hint_range(0.0, 1.0, 0.01);
+uniform float metallic : hint_range(0.0, 1.0, 0.01);
+
+void vertex() {
+	VERTEX.x = VERTEX.x + CAMERA_POSITION_WORLD.x;
+	VERTEX.z = VERTEX.z + CAMERA_POSITION_WORLD.z;
+	UV = VERTEX.xz/4.0;
+}
+
+
+void fragment() {
+	vec4 albedo_tex = texture(texture_albedo,UV);
+	ALBEDO = albedo.rgb * albedo_tex.rgb;
+	METALLIC = metallic;
+	SPECULAR = specular;
+	ROUGHNESS = roughness;
+}
+"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wgks1"]
+render_priority = 0
+shader = SubResource("Shader_f5e75")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/roughness = 0.2
+shader_parameter/specular = 0.5
+shader_parameter/metallic = 0.0
+shader_parameter/texture_albedo = ExtResource("6_yig8l")
+
+[sub_resource type="BoxMesh" id="BoxMesh_3xja8"]
+lightmap_size_hint = Vector2i(10244, 5136)
+material = SubResource("ShaderMaterial_wgks1")
+add_uv2 = true
+size = Vector3(1024, 1, 1024)
+
+[node name="Node3D" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.707106, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707106, -0.5, 0.5, 0, 0, 0)
+light_color = Color(1, 0.95, 0.9, 1)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_hjfhn")
+compositor = SubResource("Compositor_nmbee")
+script = ExtResource("1_6fa6e")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="WorldEnvironment"]
+layer = -1
+
+[node name="ColorRect" type="ColorRect" parent="WorldEnvironment/CanvasLayer"]
+process_thread_group = 2
+process_thread_group_order = 0
+process_thread_messages = 0
+texture_filter = 1
+texture_repeat = 1
+material = SubResource("ShaderMaterial_kmswr")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+color = Color(1, 1, 1, 0)
+
+[node name="Character" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 0)
+script = ExtResource("1_184c3")
+
+[node name="Camera3D" type="Camera3D" parent="Character" node_paths=PackedStringArray("marker")]
+transform = Transform3D(1, 0, 0, 0, 0.914275, 0.405094, 0, -0.405094, 0.914275, 0, 4, 3)
+top_level = true
+attributes = SubResource("CameraAttributesPractical_0tvhp")
+current = true
+fov = 90.0
+script = ExtResource("2_34p80")
+marker = NodePath("../Focus")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Character"]
+shape = SubResource("CapsuleShape3D_25wll")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Character"]
+mesh = SubResource("CapsuleMesh_jwl7b")
+
+[node name="Focus" type="Marker3D" parent="Character"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("WorldBoundaryShape3D_grkbu")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -7)
+layers = 2
+gi_mode = 2
+mesh = SubResource("SphereMesh_lyf3s")
+surface_material_override/0 = SubResource("StandardMaterial3D_mvypi")
+script = ExtResource("6_gnlen")
+
+[node name="MeshInstance3D2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 7.67689)
+mesh = SubResource("BoxMesh_f06v0")
+
+[node name="MeshInstance3D4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 2.5, 0.676889)
+mesh = SubResource("BoxMesh_f06v0")
+
+[node name="MeshInstance3D5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11, 8.5, 12.6769)
+mesh = SubResource("BoxMesh_d8y8f")
+
+[node name="MeshInstance3D3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.5, 0)
+layers = 2
+gi_mode = 2
+mesh = SubResource("BoxMesh_4ykrf")
+script = ExtResource("7_j6mxa")
+
+[node name="MeshInstance3D6" type="MeshInstance3D" parent="."]
+extra_cull_margin = 16384.0
+mesh = SubResource("BoxMesh_3xja8")
+skeleton = NodePath("../StaticBody3D")
