@@ -16,7 +16,4 @@ func _input(event: InputEvent) -> void:
 	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
 		marker.rotate_x(deg_to_rad(event.relative.y * mouse_sensitivity * -1))
 		char.rotate_y(deg_to_rad(event.relative.x * mouse_sensitivity * -1))
-		
-		var camera_rot = self.rotation
-		camera_rot.x = clamp(camera_rot.x, -0.5*PI, 0.5*PI)
-		self.rotation = camera_rot
+		marker.rotation.x = clamp(marker.rotation.x, -0.5*PI, 0.5*PI)

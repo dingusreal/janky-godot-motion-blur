@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://bnf8i6hbc0n83"]
+[gd_scene load_steps=31 format=3 uid="uid://bnf8i6hbc0n83"]
 
 [ext_resource type="Script" path="res://scripts/world_environment_plus.gd" id="1_6fa6e"]
 [ext_resource type="Script" path="res://shaders/post_process/motion_blur.gd" id="1_6w3rn"]
@@ -8,9 +8,10 @@
 [ext_resource type="Script" path="res://blurtest.gd" id="6_gnlen"]
 [ext_resource type="Texture2D" uid="uid://dr5tkufwxg8c2" path="res://textures/checker.BMP" id="6_yig8l"]
 [ext_resource type="Script" path="res://blurtest2.gd" id="7_j6mxa"]
+[ext_resource type="Script" path="res://scenes/blur_test3.gd" id="9_bl4fh"]
 
 [sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_ka0vf"]
-energy_multiplier = 4.0
+energy_multiplier = 8.0
 
 [sub_resource type="Sky" id="Sky_yeup5"]
 sky_material = SubResource("PhysicalSkyMaterial_ka0vf")
@@ -20,11 +21,22 @@ background_mode = 2
 sky = SubResource("Sky_yeup5")
 ambient_light_color = Color(0.00184107, 0.00184107, 0.00184107, 1)
 ambient_light_sky_contribution = 0.5
-tonemap_mode = 2
-glow_enabled = true
+reflected_light_source = 1
+tonemap_mode = 3
+sdfgi_cascades = 1
+sdfgi_min_cell_size = 1.0
+sdfgi_cascade0_distance = 64.0
+sdfgi_max_distance = 128.0
+sdfgi_y_scale = 2
+sdfgi_energy = 0.5
+glow_intensity = 5.0
+glow_strength = 0.67
 glow_mix = 0.5
+glow_bloom = 0.05
+glow_blend_mode = 1
 fog_enabled = true
-fog_sky_affect = 0.0
+fog_light_energy = 4.0
+fog_aerial_perspective = 1.0
 
 [sub_resource type="CompositorEffect" id="CompositorEffect_ibfws"]
 resource_local_to_scene = false
@@ -127,6 +139,8 @@ material = SubResource("ShaderMaterial_wgks1")
 add_uv2 = true
 size = Vector3(1024, 1, 1024)
 
+[sub_resource type="BoxMesh" id="BoxMesh_5ipia"]
+
 [node name="Node3D" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
@@ -143,9 +157,6 @@ script = ExtResource("1_6fa6e")
 layer = -1
 
 [node name="ColorRect" type="ColorRect" parent="WorldEnvironment/CanvasLayer"]
-process_thread_group = 2
-process_thread_group_order = 0
-process_thread_messages = 0
 texture_filter = 1
 texture_repeat = 1
 material = SubResource("ShaderMaterial_kmswr")
@@ -219,3 +230,8 @@ script = ExtResource("7_j6mxa")
 extra_cull_margin = 16384.0
 mesh = SubResource("BoxMesh_3xja8")
 skeleton = NodePath("../StaticBody3D")
+
+[node name="MeshInstance3D7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -14)
+mesh = SubResource("BoxMesh_5ipia")
+script = ExtResource("9_bl4fh")

@@ -53,5 +53,8 @@ mv_jump={
 
 [rendering]
 
+driver/threads/thread_model=0
+lights_and_shadows/directional_shadow/size=2048
+anti_aliasing/screen_space_roughness_limiter/enabled=false
 viewport/hdr_2d=true
-anti_aliasing/quality/use_debanding=true
+lights_and_shadows/positional_shadow/atlas_size=2048

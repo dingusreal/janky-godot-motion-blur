@@ -17,6 +17,7 @@ func _ready() -> void:
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
 	if motion_blur:
+		canvas.material.set_shader_parameter("prev_velocity_texture",canvas.material.get("shader_parameters/velocity_texture"))
 		canvas.material.set_shader_parameter("velocity_texture",motion_blur.result)
 		canvas.material.set_shader_parameter("depth_texture",motion_blur.result2)
 		canvas.material.set_shader_parameter("colour_texture",motion_blur.result3)
