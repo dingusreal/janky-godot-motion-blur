@@ -1,3 +1,7 @@
+# Note: this is now obsolete. If you want motion blur that actually works, go to https://github.com/sphynx-owner/JFA_driven_motion_blur_addon
+
+
+## original readme:
 ![janky godot motion blur](https://github.com/dingusreal/janky-godot-motion-blur/assets/148672705/fbf3c7c3-1f44-45d6-a9c9-4f33e2173faa)
 
 requires godot 4.3 or higher
